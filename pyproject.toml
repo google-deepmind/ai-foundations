@@ -17,7 +17,7 @@ dependencies = [
     "numpy == 2.0.2",
     "pandas == 2.2.2",
     "plotly == 5.24.1",
-    "IPython == 7.34.0",
+    "IPython == 8.10.0",
 ]
 
 [project.urls]
