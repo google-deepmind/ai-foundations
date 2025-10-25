@@ -290,7 +290,7 @@ def plot_data_and_decision_boundary(
 
     if sum(classification_errors) == 0:
       print(
-          "\n\n✅ Well done! Your decision boundary correclty separates"
+          "\n\n✅ Well done! Your decision boundary correctly separates"
           " all data points."
       )
     else:

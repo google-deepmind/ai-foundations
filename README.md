@@ -21,7 +21,7 @@ initially through a private beta program.
 
 ## The AI Research Foundations Courses
 
-The eight courses are in the curriculum are:
+The eight courses in the curriculum are:
 
 1. Build Your Own Small Language Model
 2. Represent Your Language Data
