@@ -34,14 +34,14 @@ class BPEWordTokenizer:
   vocabulary.
 
   Attributes:
-      vocabulary: List of subword tokens including special tokens.
-      vocabulary_size: Total number of tokens in vocabulary.
-      token_to_index: Mapping from tokens to indices.
-      index_to_token: Mapping from indices to tokens.
-      merges: List of byte pair merges learned during training.
-      pad_token_id: Index of the padding token.
-      unknown_token_id: Index of the unknown token.
-      tokenized_corpus: Cached tokenized corpus after BPE training.
+    vocabulary: List of subword tokens including special tokens.
+    vocabulary_size: Total number of tokens in vocabulary.
+    token_to_index: Mapping from tokens to indices.
+    index_to_token: Mapping from indices to tokens.
+    merges: List of byte pair merges learned during training.
+    pad_token_id: Index of the padding token.
+    unknown_token_id: Index of the unknown token.
+    tokenized_corpus: Cached tokenized corpus after BPE training.
   """
 
   UNKNOWN_TOKEN = "<UNK>"
@@ -77,10 +77,9 @@ class BPEWordTokenizer:
 
     if vocabulary is None:
       # Learn BPE merges and derive vocabulary from tokenized corpus.
-      self.merges, tokenized, vocabulary_set = self._learn_bpe(
+      self.merges, vocabulary_set = self._learn_bpe(
           texts, num_merges
       )
-      self.tokenized_corpus = tokenized
 
       # Ensure that basic alphanumeric characters are always included in the
       # vocabulary.
@@ -160,10 +159,10 @@ class BPEWordTokenizer:
     """Encode a string into list of token indices.
 
     Args:
-        text: Input text.
+      text: Input text.
 
     Returns:
-        List of integers corresponding to tokens.
+      List of integers corresponding to tokens.
     """
     token_ids = []
     for token in self._split_text(text):
@@ -242,7 +241,7 @@ class BPEWordTokenizer:
 
   def _learn_bpe(
       self, corpus: List[str], num_merges: int
-  ) -> Tuple[List[Tuple[str, str]], List[List[List[str]]], Set[str]]:
+  ) -> Tuple[List[Tuple[str, str]], Set[str]]:
     """Learn BPE merges from a corpus of texts.
 
     Args:
@@ -250,11 +249,8 @@ class BPEWordTokenizer:
       num_merges: Number of merge operations to perform.
 
     Returns:
-        merges: List of merges in order they are learned to be performed.
-        tokenized_corpus: List of list of list of subword tokens where each
-          paragraph in the corpus is tokenized as a list of list of
-          subword tokens.
-        vocabulary_set: Set of subword tokens after performing all merges.
+      merges: List of merges in order they are learned to be performed.
+      vocabulary_set: Set of subword tokens after performing all merges.
     """
     # List of lists of lists to store tokenized text corpus.
     tokenized_corpus = []
@@ -296,7 +292,7 @@ class BPEWordTokenizer:
       vocabulary.add(most_freq_pair[0] + most_freq_pair[1])
       pbar.set_postfix(vocabulary_size=f"{len(vocabulary):,}")
 
-    return merges, tokenized_corpus, vocabulary
+    return merges, vocabulary
 
   @classmethod
   def from_url(cls, url: str) -> "BPEWordTokenizer":
