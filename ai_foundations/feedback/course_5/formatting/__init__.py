@@ -13,6 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Classes and utilities for tokenizing texts."""
+"""Test for validating the formatting of questions and answers."""
 
-from .bpe_tokenizer import BPEWordTokenizer
+from .check_qa_format import check_qa_format

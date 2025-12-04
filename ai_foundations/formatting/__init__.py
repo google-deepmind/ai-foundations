@@ -13,6 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Classes and utilities for tokenizing texts."""
+"""Question-answer dialogue formatting."""
 
-from .bpe_tokenizer import BPEWordTokenizer
+from .format_qa import format_qa

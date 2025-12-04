@@ -13,6 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Classes and utilities for tokenizing texts."""
+"""Student feedback for the AI Research Foundations LoRA lab."""
 
-from .bpe_tokenizer import BPEWordTokenizer
+from .check_loralab_answer import check_loralab_answer
