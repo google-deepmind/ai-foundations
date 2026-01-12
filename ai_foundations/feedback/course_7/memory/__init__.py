@@ -13,9 +13,14 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for n-gram model components."""
+"""A collection of test functions for the GPU Memory Calculator lab.
 
-from .test_candidate_tokens import test_candidate_tokens
-from .test_ngram_counts import test_ngram_counts
-from .test_ngram_model import test_build_ngram_model
-from .test_ngrams import test_generate_ngrams
+This module imports and exposes all the individual test functions from its
+submodules for easy access from the parent package.
+"""
+
+from .test_memory_calculation import test_calculate_activation_memory
+from .test_memory_calculation import test_calculate_gradient_memory
+from .test_memory_calculation import test_calculate_input_data_memory
+from .test_memory_calculation import test_calculate_optimizer_memory
+from .test_memory_calculation import test_calculate_param_memory

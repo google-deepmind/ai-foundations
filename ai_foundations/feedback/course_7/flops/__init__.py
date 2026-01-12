@@ -13,9 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for n-gram model components."""
+"""Tests for FLOPs exercises."""
 
-from .test_candidate_tokens import test_candidate_tokens
-from .test_ngram_counts import test_ngram_counts
-from .test_ngram_model import test_build_ngram_model
-from .test_ngrams import test_generate_ngrams
+from .test_flops_calculator import test_compute_num_flops
+from .test_flops_scenarios import test_final_results
