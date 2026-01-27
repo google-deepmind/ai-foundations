@@ -16,8 +16,7 @@ teachable in a blended mode at a university, college or grassroots meet-up.
 Each course in the curriculum combines reading, videos, practical labs and
 short assessments.
 This code repository contains the courses' practical labs.
-The full curriculum is accessible online through [Google Cloud Skills Boost](https://www.cloudskillsboost.google/),
-initially through a private beta program.
+The full curriculum is accessible online through [Google Skills](https://www.skills.google/collections/deepmind).
 
 ## The AI Research Foundations Courses
 
