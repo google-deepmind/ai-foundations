@@ -55,18 +55,18 @@ def check_loralab_answer(
   elif ((jnp.abs(answer - answer_without_bias) < tolerance)
         or (jnp.abs(answer - answer_with_bias) < tolerance)):
     print(
+        "✅ Nice! Your answer looks correct.\n"
+        "If you consider bias weights, the answer is"
+        f" {jnp.round(answer_with_bias, decimals=5)}.\n"
+        "If you don't consider bias weights, the answer is"
+        f" {jnp.round(answer_without_bias, decimals=5)}."
+    )
+  else:
+    print(
         "❌ Your answer is not correct.\n"
         f"Matrices A and B each have {rank} x {num_units}"
         f" = {rank * num_units} trainable parameters.\n"
         f"The full weight matrix has {num_units} x {num_units}"
         f" = {num_units * num_units} parameters.\n"
         f"There are {num_units} bias weights."
-    )
-  else:
-    print(
-        "✅ Nice! Your answer looks correct.\n"
-        "If you consider bias weights, the answer is"
-        f" {jnp.round(answer_with_bias, decimals=5)}.\n"
-        "If you don't consider bias weights, the answer is"
-        f" {jnp.round(answer_without_bias, decimals=5)}."
     )
