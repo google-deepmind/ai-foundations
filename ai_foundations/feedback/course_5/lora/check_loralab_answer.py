@@ -52,8 +52,8 @@ def check_loralab_answer(
 
   if answer > 1 or answer < 0:
     print("❌ The answer needs to be between 0 and 1.")
-  elif ((jnp.abs(answer - answer_without_bias) < tolerance)
-        or (jnp.abs(answer - answer_with_bias) < tolerance)):
+  elif ((jnp.abs(answer - answer_without_bias) > tolerance)
+        and (jnp.abs(answer - answer_with_bias) > tolerance)):
     print(
         "❌ Your answer is not correct.\n"
         f"Matrices A and B each have {rank} x {num_units}"
