@@ -12,6 +12,8 @@ classifiers = [  # List of https://pypi.org/classifiers/
 ]
 dependencies = [
     "gemma == 3.0.0",
+    "kauldron < 1.4.0",
+    "typeguard < 4.4",
     "jax == 0.7.2",
     "keras == 3.10.0",
     "numpy == 2.0.2",
