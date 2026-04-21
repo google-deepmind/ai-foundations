@@ -12,12 +12,16 @@ classifiers = [  # List of https://pypi.org/classifiers/
 ]
 dependencies = [
     "gemma == 3.0.0",
+    "IPython == 7.34.0",
     "jax == 0.7.2",
-    "keras == 3.10.0",
+    "kauldron == 1.3.0",
+    "keras == 3.13.2",
+    "keras_hub == 0.26.0",
     "numpy == 2.0.2",
+    "orbax-checkpoint == 0.11.21",
     "pandas == 2.2.2",
     "plotly == 5.24.1",
-    "IPython == 7.34.0",
+    "typeguard == 4.4.4",
 ]
 
 [project.urls]
@@ -27,8 +31,8 @@ repository = "https://github.com/google-deepmind/ai-foundations"
 # Development deps (unittest, linting, formating,...)
 # Installed through `pip install -e .[dev]`
 dev = [
-    "pylint>=2.6.0",
     "pyink",
+    "pylint>=2.6.0",
 ]
 
 [tool.pyink]
