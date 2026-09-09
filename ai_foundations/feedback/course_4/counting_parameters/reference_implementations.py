@@ -62,7 +62,6 @@ def parameter_count_attention(hyperparams: Dict[str, int]) -> int:
   # Parameters for output projection.
   o_parameter_count = (embedding_dim + 1) * embedding_dim
 
-  # Parameters for layer normalization component.
   parameter_count = (
       q_parameter_count
       + k_parameter_count
@@ -158,16 +157,16 @@ def parameter_count_transformer_block(hyperparams: Dict[str, int]) -> int:
     Total number of trainable parameters for one transformer block.
   """
 
-  embedding_dim = hyperparams["embedding_dim"]
-
   # Parameters for multi-head attention mechanism.
   mha_parameter_count = parameter_count_attention(hyperparams)
 
   # Parameters for MLP component.
   mlp_parameter_count = parameter_count_mlp(hyperparams)
 
-  # Parameters for two layer norm components.
-  layer_norm_parameter_count = 2 * embedding_dim
+  # Parameters for the two layer norm components. Each one has both a scale
+  # (gamma) and a shift (beta) vector, so each contributes
+  # `2 * embedding_dim` parameters.
+  layer_norm_parameter_count = 2 * parameter_count_layer_norm(hyperparams)
 
   parameter_count = (
       mha_parameter_count + mlp_parameter_count + layer_norm_parameter_count
