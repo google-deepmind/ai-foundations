@@ -18,7 +18,7 @@
 from typing import Any, Callable, Dict, Tuple
 from ai_foundations import attention
 from ai_foundations.feedback.utils import render_feedback
-from gemma import modules as _modules
+from gemma.gm.nn import _modules
 import jax
 import jax.numpy as jnp
 

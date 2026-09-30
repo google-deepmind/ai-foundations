@@ -25,9 +25,9 @@ from ai_foundations import attention
 import flax
 from flax import linen as nn
 from gemma import gm
-from gemma import layers as _layers
-from gemma import modules as _modules
-from gemma import transformer
+from gemma.gm.nn import _layers
+from gemma.gm.nn import _modules
+from gemma.gm.nn import _config
 from gemma.gm.utils import _dtype_params
 from gemma.gm.utils import _jax_utils
 from gemma.gm.vision import _token_utils
@@ -59,6 +59,7 @@ class AttentionWeightBlock(_modules.Block):
         attn_type=self.attn_type,
         query_pre_attn_scalar=self.query_pre_attn_scalar,
         rope_base_frequency=self.rope_base_frequency,
+        rope_scale_factor=self.rope_scale_factor,
         attn_logits_soft_cap=self.attn_logits_soft_cap,
         sliding_window_size=self.sliding_window_size,
         use_qk_norm=self.use_qk_norm,
@@ -134,7 +135,7 @@ class Output:
 
   # When `return_last_only`, `logits` is `*B V`
   logits: Float['*B L V'] | Float['*B V']
-  cache: transformer.Cache | None
+  cache: _config.Cache | None
   attention_weights: dict[str, jax.Array] | None
   attention_mask: Bool['*B L cache_length'] | None
   qkv: dict[str, dict[str, jax.Array]] | None
@@ -206,7 +207,7 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
       # TODO(epot): Cleanup and simplify the API.
       positions: Int['*B L'] | None = None,
       positions_offset: Int['*B'] | None = None,
-      cache: transformer.Cache | None = None,
+      cache: _config.Cache | None = None,
       # During training and pre-filling, the attention mask is `*B L L`
       # When sampling (after prefilling), tokens are decoded one by one,
       # so the attention mask is `*B 1 cache_length`
@@ -247,9 +248,12 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
           tokens=tokens,
           images=images,
           positions=positions,
-          positions_offset=positions_offset,
           attention_mask=attention_mask,
       )
+      if positions is None and positions_offset is not None:
+        inputs = inputs.replace(
+            positions=inputs.positions + positions_offset[..., None]
+        )
       del positions, attention_mask
 
       x = inputs.embeddings

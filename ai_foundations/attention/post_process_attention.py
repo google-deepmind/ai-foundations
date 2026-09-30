@@ -15,7 +15,7 @@
 
 """A post-processing utility for attention weights."""
 
-from gemma.modules import K_MASK
+from gemma.gm.nn._modules import K_MASK
 import jax
 import jax.numpy as jnp
 
