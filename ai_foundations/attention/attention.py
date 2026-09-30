@@ -19,8 +19,8 @@ Replaces the attention mechanism of Gemma such that it exposes the attention
 weights and QKV matrices.
 """
 
-from gemma import modules as _modules
-from gemma import positional_embeddings
+from gemma.gm.nn import _modules
+from gemma.gm.math import _positional_embeddings as positional_embeddings
 import jax
 import jax.numpy as jnp
 
@@ -73,12 +73,14 @@ class AttentionWeightAttention(_modules.Attention):
         query_proj,
         segment_pos,
         base_frequency=self.rope_base_frequency,
+        scale_factor=self.rope_scale_factor,
     )
     query_scaled = query_proj * self.query_pre_attn_scalar
     key_proj = positional_embeddings.apply_rope(
         key_proj,
         segment_pos,
         base_frequency=self.rope_base_frequency,
+        scale_factor=self.rope_scale_factor,
     )
 
     # Cache is left aligned.
@@ -96,6 +98,9 @@ class AttentionWeightAttention(_modules.Attention):
       # [batch_size, cache_size, num_heads, head_dim].
       key_proj = jax.lax.dynamic_update_slice(
           cache['k'], key_proj, slice_indices
+      )
+      cache_positions = jax.lax.dynamic_update_slice(
+          cache['positions'], segment_pos, slice_indices[:2]
       )
 
     # Return Q, K, V matrices as qkv_dict so that learners can manipulate them.
@@ -124,11 +129,9 @@ class AttentionWeightAttention(_modules.Attention):
         raise ValueError(
             'Sliding_window_size must be set if Local Sliding attention type'
         )
-      sliding_mask = _modules._create_sliding_mask(
+      sliding_mask = _modules.create_sliding_mask(
           segment_pos,
-          end_index=cache['end_index'][0] if cache is not None else 0,
-          # Derive cache length from attn_mask shape in case cache is None
-          cache_len=attn_mask.shape[-1],
+          cache_positions=cache_positions if cache is not None else None,
           sliding_window_size=self.sliding_window_size,
       )
       # [batch_size, seq_len, cache_size].
@@ -166,6 +169,8 @@ class AttentionWeightAttention(_modules.Attention):
           'k': key_proj,
           # [batch_size].
           'end_index': cache['end_index'] + seq_len,
+          # [batch_size, cache_size].
+          'positions': cache_positions,
       }
     else:
       new_cache = None
