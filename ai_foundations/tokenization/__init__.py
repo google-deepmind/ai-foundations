@@ -15,4 +15,5 @@
 
 """Classes and utilities for tokenizing texts."""
 
+from .bpe_arabic_tokenizer import ArabicBPETokenizer
 from .bpe_tokenizer import BPEWordTokenizer
