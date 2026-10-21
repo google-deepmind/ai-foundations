@@ -16,7 +16,7 @@ dependencies = [
     "IPython >= 7.34.0",
     "jax == 0.11.1",
     "kauldron >= 1.4.4",
-    "keras == 3.13.2",
+    "keras == 3.15.0",
     "keras_hub == 0.26.0",
     "numpy >= 2.1.0",
     "orbax-checkpoint == 0.12.7",
