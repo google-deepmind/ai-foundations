@@ -18,7 +18,7 @@
 from typing import Any, Callable, Dict, Tuple
 from ai_foundations import attention
 from ai_foundations.feedback.utils import render_feedback
-from gemma import modules as _modules
+from gemma.gm.nn import _modules
 import jax
 import jax.numpy as jnp
 
@@ -419,10 +419,10 @@ def test_compute_attention(
     )
 
     # Extract d_k.
-    _, dim_key = key_proj.shape  # type: ignore
+    _, dim_key = key_proj.shape
 
     # Compute the logits = QK.T/sqrt(d_k)
-    logits = (query_proj @ key_proj.T) / jnp.sqrt(dim_key)  # type: ignore
+    logits = (query_proj @ key_proj.T) / jnp.sqrt(dim_key)
 
     # Compute the attention weights alpha.
     alpha = jax.nn.softmax(logits)

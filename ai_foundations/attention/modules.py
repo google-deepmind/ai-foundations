@@ -25,15 +25,16 @@ from ai_foundations import attention
 import flax
 from flax import linen as nn
 from gemma import gm
-from gemma import layers as _layers
-from gemma import modules as _modules
-from gemma import transformer
+from gemma.gm.nn import _config
+from gemma.gm.nn import _layers
+from gemma.gm.nn import _modules
 from gemma.gm.utils import _dtype_params
 from gemma.gm.utils import _jax_utils
 from gemma.gm.vision import _token_utils
 import jax
 import jax.numpy as jnp
 from kauldron.typing import Bool, Float, Int, UInt8, typechecked  # pylint: disable=g-multiple-import,g-importing-member
+
 
 LayerCache = _modules.LayerCache
 AttentionType = _modules.AttentionType
@@ -59,6 +60,7 @@ class AttentionWeightBlock(_modules.Block):
         attn_type=self.attn_type,
         query_pre_attn_scalar=self.query_pre_attn_scalar,
         rope_base_frequency=self.rope_base_frequency,
+        rope_scale_factor=self.rope_scale_factor,
         attn_logits_soft_cap=self.attn_logits_soft_cap,
         sliding_window_size=self.sliding_window_size,
         use_qk_norm=self.use_qk_norm,
@@ -77,7 +79,7 @@ class AttentionWeightBlock(_modules.Block):
     if self.use_post_ffw_norm:
       self.post_ffw_norm = _layers.RMSNorm()
 
-  def __call__(  # type: ignore
+  def __call__(
       self,
       x: jax.Array,
       segment_pos: jax.Array,
@@ -134,7 +136,7 @@ class Output:
 
   # When `return_last_only`, `logits` is `*B V`
   logits: Float['*B L V'] | Float['*B V']
-  cache: transformer.Cache | None
+  cache: _config.Cache | None
   attention_weights: dict[str, jax.Array] | None
   attention_mask: Bool['*B L cache_length'] | None
   qkv: dict[str, dict[str, jax.Array]] | None
@@ -198,15 +200,14 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
   # function, the batch dimension is flattened to a single dimension.
   @_jax_utils.flatten_unflatten_batch_dim()
   @typechecked
-  def __call__(  # pytype: disable=signature-mismatch
+  def __call__(
       self,
       tokens: Int['*B L'],
       *,
       images: UInt8['*B N H W C'] | UInt8['*B H W C'] | None = None,
-      # TODO(epot): Cleanup and simplify the API.
       positions: Int['*B L'] | None = None,
       positions_offset: Int['*B'] | None = None,
-      cache: transformer.Cache | None = None,
+      cache: _config.Cache | None = None,
       # During training and pre-filling, the attention mask is `*B L L`
       # When sampling (after prefilling), tokens are decoded one by one,
       # so the attention mask is `*B 1 cache_length`
@@ -247,9 +248,12 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
           tokens=tokens,
           images=images,
           positions=positions,
-          positions_offset=positions_offset,
           attention_mask=attention_mask,
       )
+      if positions is None and positions_offset is not None:
+        inputs = inputs.replace(
+            positions=inputs.positions + positions_offset[..., None]
+        )
       del positions, attention_mask
 
       x = inputs.embeddings
@@ -267,7 +271,7 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
             inputs.attention_mask,
         )
         new_cache[layer_name] = (
-            layer_cache  # pytype: disable=container-type-mismatch
+            layer_cache
         )
         attn_weights[layer_name] = layer_attn_weights
         qkv[layer_name] = layer_qkv
@@ -285,7 +289,7 @@ class AttentionWeightGemma3_1B(gm.nn.Gemma3_1B):  # pylint: disable=invalid-name
       x = _token_utils.remove_mm_logits(
           logits=x,
           tokens=tokens,
-          num_tokens_per_image=self.config.vision_encoder.num_mm_tokens_per_image,  # pytype: disable=attribute-error
+          num_tokens_per_image=self.config.vision_encoder.num_mm_tokens_per_image,
       )
 
     logits = self.embedder.decode(x)

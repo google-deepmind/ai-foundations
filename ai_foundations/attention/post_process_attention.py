@@ -15,9 +15,11 @@
 
 """A post-processing utility for attention weights."""
 
-from gemma.modules import K_MASK
+from gemma.gm.nn import _modules
 import jax
 import jax.numpy as jnp
+
+K_MASK = _modules.K_MASK
 
 
 def post_process_attention(
